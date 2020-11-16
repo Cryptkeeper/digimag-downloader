@@ -37,7 +37,7 @@ func downloadPublication(id string) error {
 func main() {
 	// parse publication ID directly from os.Args
 	// while the flags package can accomplish this, the argument is required, and since there's only one argument
-	// 	it makes the most since to simply parse (and require) len(os.Args) == 1
+	// 	it makes the most sense to simply parse (and require) len(os.Args) == 1
 	if len(os.Args) != 2 {
 		fmt.Printf("Usage: digimag-downloader <publication ID>")
 		return
