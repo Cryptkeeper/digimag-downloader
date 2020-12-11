@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
 
 func downloadPublication(id string) error {
@@ -20,8 +21,13 @@ func downloadPublication(id string) error {
 		for _, page := range issue.Issue.Pages {
 			var issueAttr = archive.Archive.Issues[i].Attributes
 
+			var sequentialPage, err = strconv.Atoi(page.Attributes.SequentialPage)
+			if err != nil {
+				return err
+			}
+
 			// target filePath to save the HTTP response to
-			var filePath = fmt.Sprintf("issue_%s_(%s)_page_%s.pdf", issueAttr.IssueId, issueAttr.IssueName, page.Attributes.SequentialPage)
+			var filePath = fmt.Sprintf("issue_%s_(%s)_page_%03d.pdf", issueAttr.IssueId, issueAttr.IssueName, sequentialPage)
 
 			fmt.Println(filePath)
 
