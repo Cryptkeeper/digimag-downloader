@@ -2,8 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
 )
 
 type issueResponse struct {
@@ -34,16 +32,8 @@ func (a archiveResponse) fetchIssues() ([]issueResponse, error) {
 	var issues = make([]issueResponse, len(a.Archive.Issues))
 
 	for i, issue := range a.Archive.Issues {
-		resp, err := http.Get("https://mydigimag.rrd.com/publication/globals.php?id_issue=" + issue.Attributes.IssueId + "&out=json")
-		if err != nil {
-			return nil, err
-		}
-
-		b, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-		resp.Body.Close()
+		url := "https://mydigimag.rrd.com/publication/globals.php?id_issue=" + issue.Attributes.IssueId + "&out=json"
+		b, err := requestBody(url)
 
 		if err = json.Unmarshal(b, &issues[i]); err != nil {
 			return nil, err
@@ -56,16 +46,12 @@ func (a archiveResponse) fetchIssues() ([]issueResponse, error) {
 func fetchArchiveResponse(id string) (archiveResponse, error) {
 	var archive archiveResponse
 
-	resp, err := http.Get("https://mydigimag.rrd.com/publication/archive.php?id_publication=" + id + "&out=json")
+	url := "https://mydigimag.rrd.com/publication/archive.php?id_publication=" + id + "&out=json"
+	b, err := requestBody(url)
+
 	if err != nil {
 		return archive, err
+	} else {
+		return archive, json.Unmarshal(b, &archive)
 	}
-	defer resp.Body.Close()
-
-	b, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return archive, err
-	}
-
-	return archive, json.Unmarshal(b, &archive)
 }
